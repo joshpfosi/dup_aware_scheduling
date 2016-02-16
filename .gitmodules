@@ -1,0 +1,9 @@
+[submodule "build/memcached_dup"]
+	path = build/memcached_dup
+	url = https://github.com/joshpfosi/memcached_dup.git
+[submodule "build/YCSB_unaware"]
+	path = build/YCSB_unaware
+	url = https://github.com/joshpfosi/YCSB_unaware.git
+[submodule "build/YCSB_aware"]
+	path = build/YCSB_aware
+	url = https://github.com/joshpfosi/YCSB_aware.git

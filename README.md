@@ -11,6 +11,23 @@ appropriately named hosts managed by (Emulab)[https://www.emulab.net/] and
 described by the `ns-2` script `emulab.tcl`. A brief explanation of each
 directory and its contents follows:
 
+## Cloning
+
+This repository relies on modified versions of YCSB and memcached which it
+stores as submodules to distinct clones also owned by joshpfosi. When cloning
+this repository be sure to do one of the following:
+
+```shell
+git clone --recursive https://github.com/joshpfosi/dup_aware_scheduling.git
+```
+
+OR after cloning, execute:
+
+```shell
+git submodule init
+git submodule update
+```
+
 ## build
 
 The `build` directory is comprised of two kinds of scripts `build-*` and
