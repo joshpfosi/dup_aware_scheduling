@@ -1,0 +1,97 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+Fitzpatrick%
+}{%
+Fitzpatrick%
+}{%
+{\protect \APACyear {2003}}%
+}]{%
+memcached}
+\APACinsertmetastar {%
+memcached}%
+\begin{APACrefauthors}%
+Fitzpatrick, B.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2003}{}{}.
+\newblock
+\APACrefbtitle {Memcached.} {Memcached.}
+\newblock
+\begin{APACrefURL} \url{http://memcached.org/} \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Mathewson%
+}{%
+Mathewson%
+}{%
+{\protect \APACyear {2009}}%
+}]{%
+libevent_priority}
+\APACinsertmetastar {%
+libevent_priority}%
+\begin{APACrefauthors}%
+Mathewson, N.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2009}{}{}.
+\newblock
+\APACrefbtitle {Fast portable non-blocking network programming with Libevent.}
+  {Fast portable non-blocking network programming with libevent.}
+\newblock
+\begin{APACrefURL}
+  \url{http://www.wangafu.net/~nickm/libevent-book/Ref4\_event.html}
+  \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Mathewson%
+\ \BBA {} Provos%
+}{%
+Mathewson%
+\ \BBA {} Provos%
+}{%
+{\protect \APACyear {2003}}%
+}]{%
+libevent}
+\APACinsertmetastar {%
+libevent}%
+\begin{APACrefauthors}%
+Mathewson, N.%
+\BCBT {}\ \BBA {} Provos, N.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2003}{}{}.
+\newblock
+\APACrefbtitle {Libevent.} {Libevent.}
+\newblock
+\begin{APACrefURL} \url{http://libevent.org/} \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+of Utah%
+}{%
+of Utah%
+}{%
+{\protect \APACyear {2003}}%
+}]{%
+emulab}
+\APACinsertmetastar {%
+emulab}%
+\begin{APACrefauthors}%
+of Utah, U.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2003}{}{}.
+\newblock
+\APACrefbtitle {Emulab.} {Emulab.}
+\newblock
+\begin{APACrefURL} \url{http://www.emulab.net/index.php3} \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}

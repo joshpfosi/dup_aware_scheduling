@@ -1,0 +1,26 @@
+#! /bin/bash
+#
+# This script should be run before all other setup-* scripts to ensure all
+# necessary dependencies are installed
+
+# Install:
+#    - autoconf
+#    - automake
+#    - autotools
+#    - unzip
+#    - mvn
+
+echo "Updating apt-get..."
+sudo apt-get update -y > /dev/null
+echo "Installing autoconf..."
+sudo apt-get install -y autoconf > /dev/null
+echo "Installing automake..."
+sudo apt-get install -y automake > /dev/null
+echo "Installing unzip..."
+sudo apt-get install -y unzip > /dev/null
+echo "Installing default-jdk..."
+sudo apt-get install -y default-jdk > /dev/null
+echo "Installing maven..."
+sudo apt-get install -y maven > /dev/null
+echo "Building non-sudo directory under /usr/local/comp112"
+sudo mkdir -m 0777 -p /usr/local/comp112/

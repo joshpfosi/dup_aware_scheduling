@@ -1,0 +1,16 @@
+\contentsline {section}{\numberline {1}Introduction}{2}
+\contentsline {section}{\numberline {2}Experimental Setup}{2}
+\contentsline {subsection}{\numberline {2.1}Top Level Diagram}{2}
+\contentsline {subsection}{\numberline {2.2}Duplicate Awareness}{3}
+\contentsline {subsubsection}{\numberline {2.2.1}Yahoo! Cloud Serving Benchmark}{3}
+\contentsline {subsubsection}{\numberline {2.2.2}Spymemcached}{4}
+\contentsline {subsubsection}{\numberline {2.2.3}Memcached}{4}
+\contentsline {subsection}{\numberline {2.3}Emulab}{4}
+\contentsline {section}{\numberline {3}Experimental Execution}{5}
+\contentsline {subsection}{\numberline {3.1}Utilities}{5}
+\contentsline {section}{\numberline {4}Results}{5}
+\contentsline {section}{\numberline {5}Future Work}{5}
+\contentsline {section}{\numberline {6}Conclusion}{6}
+\contentsline {section}{\numberline {A}\texttt {emulab.tcl}}{7}
+\contentsline {section}{\numberline {B}Memcached Modifications}{8}
+\contentsline {section}{\numberline {C}Spymemcached Modifications}{11}

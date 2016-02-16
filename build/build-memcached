@@ -1,0 +1,29 @@
+#! /bin/bash
+#
+# Builds memcached on a specific Emulab server but because each server shares a
+# file system, it effectively builds it on all
+#
+# Usage: build-memcached <NUM_SERVERS>
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 <NUM_SERVERS>"
+  exit 1
+fi
+
+EMULAB_USER=jpfosi01
+
+NUM_SERVERS=$1
+
+zip -ru memcached memcached > /dev/null
+
+for i in `seq $NUM_SERVERS`;
+do
+  (
+  HOST=$EMULAB_USER@server-$i.dup.comp150.emulab.net
+  echo "Building memcached on $HOST..."
+  scp memcached.zip $HOST:/usr/local/comp112
+  cat setup-memcached | ssh -o "StrictHostKeyChecking no" $HOST
+  ) &
+done
+
+wait

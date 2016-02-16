@@ -1,0 +1,12 @@
+#! /bin/bash
+#
+# Builds memcached with duplicate awareness
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage $0 <NUM_THREADS>"
+  exit 1
+fi
+
+cd /usr/local/comp112/memcached
+make clean
+make IS_DUP=DUP_AWARE NUM_THREADS=$1 > /dev/null

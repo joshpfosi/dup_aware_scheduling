@@ -1,0 +1,147 @@
+diff --git a/memcached.c b/memcached.c
+index ff1af50..898f2f4 100644
+--- a/memcached.c
++++ b/memcached.c
+@@ -353,7 +353,7 @@ static const char *prot_text(enum protocol prot) {
+ conn *conn_new(const int sfd, enum conn_states init_state,
+                 const int event_flags,
+                 const int read_buffer_size, enum network_transport transport,
+-                struct event_base *base) {
++                struct event_base *base, const int priority) {
+     conn *c;
+ 
+     assert(sfd >= 0 && sfd < max_fds);
+@@ -472,6 +472,13 @@ conn *conn_new(const int sfd, enum conn_states init_state,
+     c->noreply = false;
+ 
+     event_set(&c->event, sfd, event_flags, event_handler, (void *)c);
++
++#ifdef DUP_AWARE
++    event_priority_set(&c->event, priority);
++    fprintf(stderr, "<%d event priority is %s\n", sfd, (priority == PRIMARY) ? "PRIMARY" : "DUPLICATE");
++#else
++    (void)priority;
++#endif
+     event_base_set(base, &c->event);
+     c->ev_flags = event_flags;
+ 
+@@ -4595,7 +4602,7 @@ static int server_socket(const char *interface,
+         } else {
+             if (!(listen_conn_add = conn_new(sfd, conn_listening,
+                                              EV_READ | EV_PERSIST, 1,
+-                                             transport, main_base))) {
++                                             transport, main_base, -1))) {
+                 fprintf(stderr, "failed to create listening connection\n");
+                 exit(EXIT_FAILURE);
+             }
+@@ -4742,7 +4749,7 @@ static int server_socket_unix(const char *path, int access_mask) {
+     }
+     if (!(listen_conn = conn_new(sfd, conn_listening,
+                                  EV_READ | EV_PERSIST, 1,
+-                                 local_transport, main_base))) {
++                                 local_transport, main_base, -1))) {
+         fprintf(stderr, "failed to create listening connection\n");
+         exit(EXIT_FAILURE);
+     }
+diff --git a/memcached.h b/memcached.h
+index df972f5..eae9bd6 100644
+--- a/memcached.h
++++ b/memcached.h
+@@ -23,6 +23,19 @@
+ 
+ #include "sasl_defs.h"
+ 
++#ifdef DUP_AWARE
++
++#if defined NUM_THREADS && NUM_THREADS > 0
++#else
++#error "NUM_THREADS must be defined if DUP_AWARE"
++#endif
++
++#define NUM_PRIORITIES 2
++#define PRIMARY        0
++#define DUPLICATE      1
++
++#endif
++
+ /** Maximum length of a key. */
+ #define KEY_MAX_LENGTH 250
+ 
+@@ -548,7 +561,7 @@ enum delta_result_type do_add_delta(conn *c, const char *key,
+                                     const int64_t delta, char *buf,
+                                     uint64_t *cas, const uint32_t hv);
+ enum store_item_type do_store_item(item *item, int comm, conn* c, const uint32_t hv);
+-conn *conn_new(const int sfd, const enum conn_states init_state, const int event_flags, const int read_buffer_size, enum network_transport transport, struct event_base *base);
++conn *conn_new(const int sfd, const enum conn_states init_state, const int event_flags, const int read_buffer_size, enum network_transport transport, struct event_base *base, const int priority);
+ extern int daemonize(int nochdir, int noclose);
+ 
+ #define mutex_lock(x) pthread_mutex_lock(x)
+diff --git a/thread.c b/thread.c
+index 7c56445..de80bb5 100644
+--- a/thread.c
++++ b/thread.c
+@@ -24,6 +24,7 @@ struct conn_queue_item {
+     int               event_flags;
+     int               read_buffer_size;
+     enum network_transport     transport;
++    int               priority;
+     CQ_ITEM          *next;
+ };
+ 
+@@ -332,6 +333,10 @@ static void setup_thread(LIBEVENT_THREAD *me) {
+         exit(1);
+     }
+ 
++#ifdef DUP_AWARE
++    event_priority_init(NUM_PRIORITIES);
++#endif
++
+     /* Listen for notifications from other threads */
+     event_set(&me->notify_event, me->notify_receive_fd,
+               EV_READ | EV_PERSIST, thread_libevent_process, me);
+@@ -398,7 +403,8 @@ static void thread_libevent_process(int fd, short which, void *arg) {
+ 
+     if (NULL != item) {
+         conn *c = conn_new(item->sfd, item->init_state, item->event_flags,
+-                           item->read_buffer_size, item->transport, me->base);
++                           item->read_buffer_size, item->transport, me->base,
++                           item->priority);
+         if (c == NULL) {
+             if (IS_UDP(item->transport)) {
+                 fprintf(stderr, "Can't listen for events on UDP socket\n");
+@@ -447,12 +453,35 @@ void dispatch_conn_new(int sfd, enum conn_states init_state, int event_flags,
+     LIBEVENT_THREAD *thread = threads + tid;
+ 
+     last_thread = tid;
++#ifdef DUP_AWARE
++    fprintf(stderr, "last_thread = %d, tid = %d\n", last_thread, tid);
++#endif
+ 
+     item->sfd = sfd;
+     item->init_state = init_state;
+     item->event_flags = event_flags;
+     item->read_buffer_size = read_buffer_size;
+     item->transport = transport;
++    item->priority = -1; // ignored unless DUP_AWARE
++
++#ifdef DUP_AWARE
++    if (!IS_UDP(transport)) {
++
++        if (settings.num_threads != NUM_THREADS) {
++            fprintf(stderr, "settings.num_threads must be %d for duplicate awareness"
++                    "to work in its current implementation. You specified %d "
++                    "threads.", NUM_THREADS, settings.num_threads);
++            exit(1);
++        }
++
++        static int is_priority = NUM_THREADS;
++
++        // The first set of `num_thread` connections will all be primary, while any
++        // subsequent will be duplicate.
++        item->priority = (is_priority-- > 0) ? PRIMARY : DUPLICATE;
++        fprintf(stderr, "<%d item->priority is %s\n", sfd, (item->priority == PRIMARY) ? "PRIMARY" : "DUPLICATE");
++    }
++#endif
+ 
+     cq_push(thread->new_conn_queue, item);
+ 

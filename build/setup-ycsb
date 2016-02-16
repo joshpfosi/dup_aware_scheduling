@@ -1,0 +1,19 @@
+#! /bin/bash
+#
+# Usage: ./setup-ycsb
+#
+# This script unzips and builds YCSB
+# NOTES:
+# 1) Run only after 'build-client' has copied the zip file
+# 2) Ensure Maven is installed
+#
+#     sudo apt-get install maven
+
+cd /usr/local/comp112
+
+rm -rf YCSB
+unzip YCSB.zip > /dev/null
+cd YCSB
+
+echo "Running mvn clean package -U..."
+mvn clean package -U > /dev/null

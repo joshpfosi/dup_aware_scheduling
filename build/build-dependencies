@@ -1,0 +1,35 @@
+#! /bin/bash
+#
+# This script entirely sets up all Emulab dependencies
+#
+# Usage: build-dependencies <NUM_CLIENTS> <NUM_SERVERS>
+
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 <NUM_CLIENTS> <NUM_SERVERS>"
+  exit 1
+fi
+
+EMULAB_USER=jpfosi01
+
+NUM_CLIENTS=$1
+NUM_SERVERS=$2
+
+for i in `seq $NUM_SERVERS`
+do
+  (
+  HOST=$EMULAB_USER@server-$i.dup.comp150.emulab.net
+  echo "Setting up $HOST..."
+  cat setup-dependencies | ssh -o "StrictHostKeyChecking no" $HOST
+  ) &
+done
+
+for i in `seq $NUM_CLIENTS`;
+do
+  (
+  HOST=$EMULAB_USER@client-$i.dup.comp150.emulab.net
+  echo "Setting up $HOST..."
+  cat setup-dependencies | ssh -o "StrictHostKeyChecking no" $HOST
+  ) &
+done
+
+wait

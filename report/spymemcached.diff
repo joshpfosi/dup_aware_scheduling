@@ -1,0 +1,45 @@
+diff --git a/pom.xml b/pom.xml
+index 4a07d5f..c97c12e 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -12,7 +12,7 @@
+     -->
+ 
+     <modelVersion>4.0.0</modelVersion>
+-    <groupId>net.spy</groupId>
++    <groupId>spy</groupId>
+     <artifactId>spymemcached</artifactId>
+     <version>2.999.999-SNAPSHOT</version> <!-- not used -->
+ 
+diff --git a/src/main/java/net/spy/memcached/KetamaNodeLocator.java b/src/main/java/net/spy/memcached/KetamaNodeLocator.java
+index 981dc2d..d3e4385 100644
+--- a/src/main/java/net/spy/memcached/KetamaNodeLocator.java
++++ b/src/main/java/net/spy/memcached/KetamaNodeLocator.java
+@@ -100,7 +100,17 @@ public final class KetamaNodeLocator extends SpyObject implements NodeLocator {
+   }
+ 
+   public MemcachedNode getPrimary(final String k) {
+-    MemcachedNode rv = getNodeForKey(hashAlg.hash(k));
++    long hashVal;
++
++    if (k.startsWith("dup__")) {
++      hashVal = hashAlg.hash(k);
++    }
++    else {
++      hashVal = DefaultHashAlgorithm.valueOf("CRC_HASH").hash(k);
++    }
++
++    MemcachedNode rv = getNodeForKey(hashVal);
++
+     assert rv != null : "Found no node for key " + k;
+     return rv;
+   }
+@@ -121,6 +131,8 @@ public final class KetamaNodeLocator extends SpyObject implements NodeLocator {
+         hash = tailMap.firstKey();
+       }
+     }
++
++    hash = getKetamaNodes().firstKey();
+     rv = getKetamaNodes().get(hash);
+     return rv;
+   }

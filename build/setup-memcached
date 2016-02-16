@@ -1,0 +1,20 @@
+#! /bin/bash
+#
+# This script unzips and builds memcached
+# Assumptions:
+# a) 'memcached.zip' has been copied to ~
+# b) The following dependencies are present:
+#    - autoconf
+#    - automake
+#    - autotools
+#    - libevent
+
+
+cd /usr/local/comp112
+
+unzip -u memcached.zip
+cd memcached
+
+sh autogen.sh
+./configure
+make

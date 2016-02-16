@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+# Aggregates and computes
+#
+# <WORKLOAD> <CONNS_PER_SERVER> <NUM_THREADS> <OUTPUT> <RECORDSIZE>
+# <CLIENT_THREADS> <NUM_CLIENTS> <NUM_SERVERS> <NUM_OPS>
+
+require 'pp'
+
+data = {}
+
+ARGF.each do |line|
+  (
+    _workload,
+    _cps,
+    _sthreads,
+    _output,
+    _recordsize,
+    cthreads,
+    num_clients,
+    num_servers,
+    num_ops,
+    results
+  ) = line.split(' ', 10)
+
+  throughput = results.split(' ').map(&:to_i).inject(:+)
+
+  key = "#{cthreads.rjust(2, '0')} #{num_clients} #{num_servers} #{num_ops}"
+  data[key] = [] if data[key].nil?
+
+  raise StandardError, "throughput is nil" if throughput.nil?
+  data[key] << throughput
+end
+
+data = data.each do |k, v|
+  puts "#{(v.inject(:+) / v.size).to_s.rjust(5, '0')} #{k}"
+end

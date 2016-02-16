@@ -1,0 +1,18 @@
+#! /bin/bash
+#
+# This script entirely sets up all Emulab nodes
+#
+# Usage: build-emulab <NUM_CLIENTS> <NUM_SERVERS>
+
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 <NUM_CLIENTS> <NUM_SERVERS>"
+  exit 1
+fi
+
+NUM_CLIENTS=$1
+NUM_SERVERS=$2
+
+build-dependencies $NUM_CLIENTS $NUM_SERVERS
+build-libevent $NUM_SERVERS
+build-memcached $NUM_SERVERS
+build-ycsb $NUM_CLIENTS
