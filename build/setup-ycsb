@@ -11,8 +11,8 @@
 
 cd /usr/local/comp112
 
-rm -rf YCSB
-unzip YCSB.zip > /dev/null
+unzip -u YCSB*.zip > /dev/null
+mv YCSB*aware YCSB
 cd YCSB
 
 echo "Running mvn clean package -U..."

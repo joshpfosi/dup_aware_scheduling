@@ -12,7 +12,8 @@
 
 cd /usr/local/comp112
 
-unzip -u memcached.zip
+unzip -u memcached_dup.zip > /dev/null
+mv memcached_dup memcached
 cd memcached
 
 sh autogen.sh

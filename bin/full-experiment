@@ -1,0 +1,48 @@
+#! /bin/bash
+#
+# Runs configuration as specified by `experiment` for both duplicate aware and
+# unaware configurations
+#
+# Usage: See USAGE of `experiment`
+
+if [ "$#" -ne 9 ]; then
+  echo "Usage: $0 <WORKLOAD> <CONNS_PER_SERVER> <NUM_THREADS> <OUTPUT>\
+  <RECORDSIZE> <CLIENT_THREADS> <NUM_CLIENTS> <NUM_SERVERS> <NUM_OPS>"
+  exit 1
+fi
+
+EMULAB_USER=jpfosi01
+SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ServerAliveInterval=100"
+
+NUM_THREADS=$3
+NUM_CLIENTS=$7
+NUM_SERVERS=$8
+
+# DUPLICATE UNAWARE
+
+echo "Building YCSB duplicate unaware..."
+rm -rf YCSB
+cp -r YCSB_unaware YCSB
+sh build-ycsb.sh $NUM_CLIENTS
+
+echo "Running experiment (unaware)"
+sh experiment.sh "$@"
+
+# DUPLICATE AWARE SCHEDULING
+
+echo "Building YCSB duplicate aware..."
+rm -rf YCSB
+cp -r YCSB_aware YCSB
+sh build-ycsb.sh $NUM_CLIENTS
+
+for i in `seq $NUM_SERVERS`
+do
+  HOST=$EMULAB_USER@server-$i.dup.comp150.emulab.net
+  echo "Making DUP_AWARE $HOST..."
+  cat make-dup-aware | $SSH $HOST bash -s - $NUM_THREADS &
+done
+
+echo "Running experiment (aware)"
+sh experiment.sh "$@"
+
+rm -rf YCSB

@@ -3,12 +3,8 @@
 # Install libevent
 
 cd /usr/local/comp112
-unzip -u libevent-master
+unzip -u libevent-master > /dev/null
 cd libevent-master
-
-# NOTE: If any of these steps for inexplicable reasons, a troubleshooting
-# technique which worked for me was removing the libevent directory,
-# recopying the zip file and unziping it.
 
 sh autogen.sh
 ./configure

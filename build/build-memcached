@@ -11,18 +11,19 @@ if [ "$#" -ne 1 ]; then
 fi
 
 EMULAB_USER=jpfosi01
+SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ServerAliveInterval=100"
 
 NUM_SERVERS=$1
 
-zip -ru memcached memcached > /dev/null
+zip -ru memcached_dup memcached_dup > /dev/null
 
 for i in `seq $NUM_SERVERS`;
 do
   (
   HOST=$EMULAB_USER@server-$i.dup.comp150.emulab.net
   echo "Building memcached on $HOST..."
-  scp memcached.zip $HOST:/usr/local/comp112
-  cat setup-memcached | ssh -o "StrictHostKeyChecking no" $HOST
+  scp memcached_dup.zip $HOST:/usr/local/comp112
+  cat setup-memcached | $SSH $HOST
   ) &
 done
 

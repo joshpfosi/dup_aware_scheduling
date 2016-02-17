@@ -1,4 +1,4 @@
-#! bin/sh
+#! /bin/bash
 #
 # Script to copy and install YCSB on Emulab clients
 #
@@ -10,23 +10,21 @@ if [ "$#" -ne 1 ]; then
 fi
 
 EMULAB_USER=jpfosi01
+SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ServerAliveInterval=100"
 
 NUM_CLIENTS=$1
 
-echo "Zipping temporary YCSB for copying..."
-zip -ru YCSB YCSB > /dev/null
+echo "Zipping temporary YCSB_unaware for copying..."
+zip -ru YCSB_unaware YCSB_unaware > /dev/null
 
 for i in `seq $NUM_CLIENTS`;
 do
   (
   HOST=$EMULAB_USER@client-$i.dup.comp150.emulab.net
-  echo "Installing YCSB on $HOST..."
-  scp YCSB.zip $HOST:/usr/local/comp112
-  cat setup-ycsb | ssh -o "StrictHostKeyChecking no" $HOST
+  echo "Installing YCSB_unaware on $HOST..."
+  scp YCSB_unaware.zip $HOST:/usr/local/comp112
+  cat setup-ycsb | $SSH $HOST
   ) &
 done
 
 wait
-
-echo "Removing YCSB zip file..."
-rm -f YCSB.zip
