@@ -15,4 +15,4 @@ NUM_SERVERS=$2
 ./build-dependencies $NUM_CLIENTS $NUM_SERVERS
 ./build-libevent $NUM_SERVERS
 ./build-memcached $NUM_SERVERS
-./build-ycsb $NUM_CLIENTS
+./build-ycsb $NUM_CLIENTS "YCSB_unaware"

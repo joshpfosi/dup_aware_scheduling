@@ -13,6 +13,7 @@ fi
 
 EMULAB_USER=jpfosi01
 SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ServerAliveInterval=100"
+BUILD_DIR="../build"
 
 NUM_THREADS=$3
 NUM_CLIENTS=$7
@@ -20,29 +21,26 @@ NUM_SERVERS=$8
 
 # DUPLICATE UNAWARE
 
+set -x 
 echo "Building YCSB duplicate unaware..."
-rm -rf YCSB
-cp -r YCSB_unaware YCSB
-sh build-ycsb.sh $NUM_CLIENTS
+(cd $BUILD_DIR && ./build-ycsb $NUM_CLIENTS "YCSB_unaware") &> /dev/null
 
 echo "Running experiment (unaware)"
-sh experiment.sh "$@"
+./experiment "$@"
 
 # DUPLICATE AWARE SCHEDULING
 
 echo "Building YCSB duplicate aware..."
-rm -rf YCSB
-cp -r YCSB_aware YCSB
-sh build-ycsb.sh $NUM_CLIENTS
+(cd $BUILD_DIR && ./build-ycsb $NUM_CLIENTS "YCSB_aware") &> /dev/null
 
 for i in `seq $NUM_SERVERS`
 do
   HOST=$EMULAB_USER@server-$i.dup.comp150.emulab.net
   echo "Making DUP_AWARE $HOST..."
-  cat make-dup-aware | $SSH $HOST bash -s - $NUM_THREADS &
+  (cat make-dup-aware | $SSH $HOST bash -s - $NUM_THREADS) &
 done
 
-echo "Running experiment (aware)"
-sh experiment.sh "$@"
+wait
 
-rm -rf YCSB
+echo "Running experiment (aware)"
+./experiment "$@"
