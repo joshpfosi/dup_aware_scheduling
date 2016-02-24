@@ -36,7 +36,7 @@ on the relevant client or server hosted by Emulab. After swapping in the
 experiment on Emulab, running 
 
 ```shell
-build/build-emulab
+build/build-emulab <NUM_CLIENTS> <NUM_SERVERS>
 ```
 
 will execute all other `build-*` scripts in the appropriate order. The scripts
@@ -73,7 +73,7 @@ The simplest procedure to run an experiment after swapping in on Emulab is:
 # This spins up 8 memcached instances each with 4 threads, 24 YCSB instances each
 # with 10 threads, generates a workload defined by `workload1` using a record size
 # of 1 KB, and consisting of 1000 operations, and outputs all debug and
-# experimental output to `output/*`
+# experimental output to `output_dir/*`
 ```
 
 ## Comp 112 Final Project Notes
